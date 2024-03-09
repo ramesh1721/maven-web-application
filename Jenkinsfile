@@ -1,11 +1,10 @@
 pipeline{
 
 agent any
-
-tools{
+def mavenHome = tool name: "apache-maven-3.6.3"
+/*tools {
 maven 'apache-maven-3.6.3'
-
-}
+}*/
 
 triggers{
 pollSCM('* * * * *')
