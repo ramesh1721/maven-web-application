@@ -3,7 +3,7 @@ pipeline{
 agent any
 
 tools{
-maven 'maven3.8.2'
+maven 'apache-maven-3.6.3'
 
 }
 
@@ -24,7 +24,12 @@ stages{
 	
 	}
   }
-  
+  stage('checkingVersion') {
+    steps {
+      sh 'mvn --version'
+    }
+  }
+
   stage('Build'){
   steps{
   sh  "mvn clean package"
