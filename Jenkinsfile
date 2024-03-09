@@ -1,8 +1,8 @@
 pipeline{
 
 agent any
-def mavenHome = tool name: "apache-maven-3.6.3"
-/*tools {
+/*def mavenHome = tool name: "apache-maven-3.6.3"
+tools {
 maven 'apache-maven-3.6.3'
 }*/
 
@@ -23,9 +23,13 @@ stages{
 	
 	}
   }
-  stage('checkingVersion') {
+  stage('maveninstall') {
     steps {
-      sh 'mvn --version'
+      script {
+        def mavenHome = tool 'apache-maven-3.6.3'
+        sh "${mavenHome}/bin/mvn clean install"
+        sh 'mvn --version'
+      }
     }
   }
 
