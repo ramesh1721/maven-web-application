@@ -2,9 +2,9 @@ pipeline{
 
 agent any
 /*def mavenHome = tool name: "apache-maven-3.6.3"*/
-tools {
+/*tools {
 maven 'maven3.6.3'
-}
+}*/
 
 triggers{
 pollSCM('* * * * *')
@@ -26,9 +26,10 @@ stages{
   stage('maveninstall') {
     steps {
       script {
-        def mavenHome = tool 'maven3.6.3'
-        sh "${mavenHome}/bin/mvn clean install"
-        sh 'mvn --version'
+        def mavenHome = tool name:"Maven-3.6.3", type: "maven"
+        def mavenCMD= "${mavenHome}/bin/mvn"
+        sh "${mavenCMD} clean package"
+        sh "mvn --version"
       }
     }
   }
