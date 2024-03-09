@@ -58,6 +58,7 @@ pipeline {
     stage ('build') {
       steps {
         sh'mvn --version'
+        sh "${mavenHome}/bin/mvn clean package"
       }
     }
   }
