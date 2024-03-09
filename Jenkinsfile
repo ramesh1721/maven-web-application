@@ -1,4 +1,4 @@
-pipeline{
+node {
 
 agent any
 /*def mavenHome = tool name: "apache-maven-3.6.3"*/
@@ -6,38 +6,32 @@ agent any
 maven 'maven3.6.3'
 }*/
 
-triggers{
+/*triggers{
 pollSCM('* * * * *')
 }
 
 options{
 timestamps()
 buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5'))
-}
+}*/
 
-stages{
+
 
   stage('CheckOutCode'){
-    steps{
+    
     git branch: 'master', credentialsId: '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', url: 'https://github.com/ramesh1721/maven-web-application.git'
 	
-	}
+	
   }
   stage('maveninstall') {
-    steps {
-      script {
-        def mavenHome = tool name:"maven3.6.3", type: "maven"
-        def mavenCMD= "${mavenHome}/bin/mvn"
-        sh "${mavenCMD} clean package"
-        sh "mvn --version"
-      }
-    }
+    def mavenHome = tool name:"maven3.6.3", type: "maven"
+    def mavenCMD= "${mavenHome}/bin/mvn"
+    sh "${mavenCMD} clean package"
+    sh "mvn --version"
   }
 
   stage('Build'){
-  steps{
   sh  "mvn clean package"
-  }
   }
 /*
  stage('ExecuteSonarQubeReport'){
@@ -60,7 +54,7 @@ stages{
   }
   }
   */
-}//Stages Closing
+//Stages Closing
 
 post{
 
