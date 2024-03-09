@@ -1,4 +1,4 @@
-node{
+/*node{
 
 //properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
 
@@ -34,7 +34,7 @@ sshagent(['48c992f5-c73e-40ba-b71b-9191b6f93285']) {
 }
 }
 
-*/
+
 }//try closing
 catch(e){
 currentBuild.result = "FAILURE"
@@ -43,4 +43,22 @@ finally{
 sendSlackNotifications(currentBuild.result)
 }
   
+}*/
+pipeline {
+  agent any
+  tools {
+    maven '3.6.3'
+  }
+  stages{
+    stage('git checkout') {
+      staps {
+        git branch: 'master', credentialsId: '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', url: 'https://github.com/ramesh1721/maven-web-application.git'
+      }
+    }
+    stage ('build') {
+      steps {
+        sh'mvn --version'
+      }
+    }
+  }
 }
