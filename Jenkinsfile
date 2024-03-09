@@ -1,78 +1,46 @@
-node {
+node{
 
-agent any
-/*def mavenHome = tool name: "apache-maven-3.6.3"*/
-/*tools {
-maven 'maven3.6.3'
-}*/
+properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([pollSCM('* * * * *')])])
 
-/*triggers{
-pollSCM('* * * * *')
+echo "The Job name is: ${env.JOB_NAME}"
+echo "The Nod ename is: ${env.NODE_NAME}"
+echo "The Build Number is: ${env.BUILD_NUMBER}"
+echo "The Jenkins Home directory is: ${JENKINS_HOME}"
+
+def mavenHome = tool name: "maven3.6.3"
+
+try{
+sendSlackNotifications("STARTED")
+
+stage('CheckoutCode'){
+git branch: 'master', credentialsId: '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', url: 'https://github.com/ramesh1721/maven-web-application.git'
 }
 
-options{
-timestamps()
-buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '5', daysToKeepStr: '', numToKeepStr: '5'))
-}*/
-
-
-
-  stage('CheckOutCode'){
-    
-    git branch: 'master', credentialsId: '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', url: 'https://github.com/ramesh1721/maven-web-application.git'
-	
-	
-  }
-  stage('maveninstall') {
-    def mavenHome = tool name:"maven3.6.3", type: "maven"
-    def mavenCMD= "${mavenHome}/bin/mvn"
-    sh "${mavenCMD} clean package"
-    sh "mvn --version"
-  }
-
-  stage('Build'){
-  sh  "mvn clean package"
-  }
+stage('Build'){
+sh "${mavenHome}/bin/mvn clean package"
+}
 /*
- stage('ExecuteSonarQubeReport'){
-  steps{
-  sh  "mvn clean sonar:sonar"
-  }
-  }
-  
-  stage('UploadArtifactsIntoNexus'){
-  steps{
-  sh  "mvn clean deploy"
-  }
-  }
-  
-  stage('DeployAppIntoTomcat'){
-  steps{
-  sshagent(['bfe1b3c1-c29b-4a4d-b97a-c068b7748cd0']) {
-   sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@35.154.190.162:/opt/apache-tomcat-9.0.50/webapps/"    
-  }
-  }
-  }
-  */
-//Stages Closing
-
-post{
-
- success{
- emailext to: 'ramesh.devops.trng4@gmail.com',
-          subject: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} and Build status is.. ${currentBuild.result}.",
-          body: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} and Build status is.. ${currentBuild.result}.",
-          replyTo: 'ramesh.devops.trng4@gmail.com'
- }
- 
- failure{
- emailext to: 'ramesh.devops.trng4@gmail.com',
-          subject: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} and Build status is.. ${currentBuild.result}.",
-          body: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} and Build status is.. ${currentBuild.result}.",
-          replyTo: 'ramesh.devops.trng4@gmail.com'
- }
- 
+stage('ExecuteSonarQubeReport'){
+sh "${mavenHome}/bin/mvn sonar:sonar"
 }
 
+stage('UploadArtifactsIntoNexus'){
+sh "${mavenHome}/bin/mvn deploy"
+}
 
+stage('DeployAppIntoTomcatServer'){
+sshagent(['48c992f5-c73e-40ba-b71b-9191b6f93285']) {
+  sh "scp -o StrictHostKeyChecking=no target/maven-web-application.war ec2-user@172.31.10.36:/usr/local/apache-tomcat-9.0.70/webapps/" 
+}
+}
+
+*/
+}//try closing
+catch(e){
+currentBuild.result = "FAILURE"
+}
+finally{
+sendSlackNotifications(currentBuild.result)
+}
+  
 }
