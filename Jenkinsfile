@@ -51,7 +51,7 @@ pipeline {
   }
   stages{
     stage('git checkout') {
-      staps {
+      steps {
         git branch: 'master', credentialsId: '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', url: 'https://github.com/ramesh1721/maven-web-application.git'
       }
     }
