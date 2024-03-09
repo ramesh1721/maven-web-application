@@ -26,7 +26,7 @@ stages{
   stage('maveninstall') {
     steps {
       script {
-        def mavenHome = tool 'Apache Maven 3.6.3'
+        def mavenHome = tool 'Maven3.6.3'
         sh "${mavenHome}/bin/mvn clean install"
         sh 'mvn --version'
       }
