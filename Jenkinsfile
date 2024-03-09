@@ -3,7 +3,7 @@ pipeline{
 agent any
 /*def mavenHome = tool name: "apache-maven-3.6.3"*/
 tools {
-maven 'apache-maven-3.6.3'
+maven 'maven3.6.3'
 }
 
 triggers{
