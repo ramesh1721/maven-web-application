@@ -47,7 +47,7 @@ sendSlackNotifications(currentBuild.result)
 pipeline {
   agent any
   tools {
-    maven '3.6.3'
+    maven '3.8.2'
   }
   stages{
     stage('git checkout') {
